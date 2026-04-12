@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="description" content="Professional Digital Clock with Timer, Stopwatch, Alarm & World Clock">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>VIP Digital Clock | Professional Edition</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAB4klEQVR4nO2WTUhUURTHf+feN2MaDmUkKJIQgm4CWrSpRaVICNy0iqiFYW3aRUG0qdCi6CNoUYsWQZtaFAVhBFHQJkQrTRMhRMVUKHMUZ97HmRZv3syb5zjmPXDhMt97f/f8zzn3nnuIAEmSJEmSJEmS/hdIpVKxRqMRU1VVlmW5mkwmY0opFQQiAEQiEVVVFULIiqIom7iAMMZYLpfLrKtqJpNRhBDMnPM8b2maRkVRpqqqWgghBIBEIiGEEJt2BwAopbAsi6ZSKSmEkJlMhqmqylRVpUIIUkpRVVXpOE5idXWVpVIp6rouhRC7WZZl7nke7Q4AgFKKaZo0m81KpRR3XZfm83nqui6VUjRNk1JKcVVV2Xw+n7i+viYhhHQcJ2FZ1gshRHB1dZUGg8HkyspKKhQK0dXV1ZTruonV1VUqhJCu6zLHcSLLy8vh1dXVlFKKWZYVMU1z2jAMWiwWqed5rus6DSGE67pc27Zv2LZ9I5PJhG3bDmCatqAsy04ikQgFAgEEg0GYpolCoYBKpYJkMollyzI2m02aTCah6zrK5TKEEAiHw1AUBYZhQNd1CCFg2zY0TYNt21AUBYZhIBKJgFIK0zSxuLiIpaUlGIZx7/1kMgld10mlUqH1ep3W63Xa6/VoLpfT+Xye5nI5Op/P03w+T3O5HM1ms7RUKtF6vU6FEBBCIAAkSZL+J/0ERZcPQFrEEm4AAAAASUVORK5CYII=">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #00d4ff;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        /* Professional Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .animated-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+            animation: slowDrift 20s ease-in-out infinite;
+        }
+        
+        .animated-bg::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 80% 80%, rgba(124, 58, 237, 0.08) 0%, transparent 50%);
+            animation: slowDriftReverse 25s ease-in-out infinite;
+        }
+
+        @keyframes slowDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            50% { transform: translate(5%, 5%) scale(1.1); opacity: 1; }
+        }
+        
+        @keyframes slowDriftReverse {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+            50% { transform: translate(-5%, -5%) scale(1.1); opacity: 1; }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease;
+        }
+
+        .header h1 {
+            font-size: clamp(28px, 5vw, 48px);
+            background: linear-gradient(135deg, #00d4ff, #7c3aed, #ec4899);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: 2px;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+            font-size: clamp(12px, 3vw, 14px);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Theme Selector - Fixed at Top */
+        .theme-selector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .theme-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Theme Preview Color Dot */
+        .theme-preview {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        /* Main Clock Card */
+        .clock-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: clamp(30px, 6vw, 50px);
+            padding: clamp(30px, 5vw, 50px);
+            margin-bottom: 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .clock-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Time Display */
+        .time-main {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(50px, 12vw, 120px);
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(10px, 3vw, 20px);
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .time-digit {
+            background: rgba(0,0,0,0.35);
+            padding: clamp(12px, 3vw, 20px) clamp(18px, 4vw, 35px);
+            border-radius: clamp(20px, 4vw, 30px);
+            transition: all 0.3s;
+            cursor: pointer;
+            min-width: clamp(70px, 15vw, 120px);
+        }
+
+        .time-digit:hover {
+            transform: scale(1.03);
+            background: rgba(0, 212, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: clamp(10px, 2vw, 15px);
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 30px);
+            border-radius: 40px;
+            color: white;
+            cursor: pointer;
+            font-size: clamp(12px, 3vw, 15px);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Timer & Stopwatch Display */
+        .timer-display, .stopwatch-display {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(35px, 8vw, 70px);
+            text-align: center;
+            color: white;
+            margin: 30px 0;
+            letter-spacing: clamp(3px, 1vw, 5px);
+            background: rgba(0,0,0,0.3);
+            padding: clamp(20px, 4vw, 30px);
+            border-radius: 30px;
+        }
+
+        .control-group {
+            display: flex;
+            gap: clamp(10px, 2vw, 15px);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .time-input {
+            padding: clamp(10px, 2vw, 12px) clamp(15px, 3vw, 20px);
+            font-size: clamp(14px, 3vw, 18px);
+            border: none;
+            border-radius: 40px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            border: 1px solid var(--glass-border);
+            font-family: 'Orbitron', monospace;
+            text-align: center;
+            width: clamp(80px, 20vw, 100px);
+        }
+
+        .time-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 30px);
+            border: none;
+            border-radius: 40px;
+            font-size: clamp(12px, 3vw, 15px);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .btn-info { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Alarm Section */
+        .alarm-input-group {
+            display: flex;
+            gap: clamp(10px, 2vw, 15px);
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .alarm-time-input {
+            padding: clamp(10px, 2vw, 12px) clamp(15px, 3vw, 20px);
+            font-size: clamp(14px, 3vw, 18px);
+            border: none;
+            border-radius: 40px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            border: 1px solid var(--glass-border);
+            font-family: 'Orbitron', monospace;
+        }
+
+        .alarm-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .alarm-item {
+            background: rgba(0,0,0,0.3);
+            padding: clamp(12px, 3vw, 15px) clamp(15px, 4vw, 20px);
+            margin: 10px 0;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* World Clock */
+        .world-clock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .city-card {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .city-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .city-name {
+            font-size: clamp(14px, 3vw, 17px);
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .city-time {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(22px, 5vw, 28px);
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .city-date {
+            font-size: clamp(10px, 2vw, 12px);
+            color: rgba(255,255,255,0.6);
+            margin-top: 5px;
+        }
+
+        /* Date Section */
+        .date-section {
+            margin-top: 20px;
+        }
+
+        .current-date {
+            font-size: clamp(16px, 4vw, 22px);
+            color: white;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .day-info {
+            display: flex;
+            justify-content: center;
+            gap: clamp(10px, 2vw, 15px);
+            flex-wrap: wrap;
+        }
+
+        .day-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: clamp(6px, 2vw, 8px) clamp(15px, 4vw, 20px);
+            border-radius: 40px;
+            font-size: clamp(11px, 3vw, 13px);
+            color: white;
+            font-weight: 500;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: clamp(12px, 3vw, 15px) clamp(20px, 5vw, 25px);
+            border-radius: 40px;
+            color: white;
+            font-weight: 500;
+            animation: slideInRight 0.4s ease;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            font-size: clamp(12px, 3vw, 14px);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Lap List */
+        .lap-list {
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .lap-item {
+            background: rgba(0,0,0,0.3);
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-size: clamp(12px, 3vw, 14px);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: rgba(255,255,255,0.35);
+            font-size: clamp(11px, 3vw, 13px);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 768px) {
+            .theme-selector {
+                padding: 8px 15px;
+                gap: 8px;
+            }
+            .theme-btn {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            .theme-preview {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            .clock-card {
+                padding: 20px;
+            }
+            .time-digit {
+                min-width: 55px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="animated-bg"></div>
+
+<div class="container">
+    <div class="header">
+        <h1>✨ VIP DIGITAL CLOCK ✨</h1>
+        <p>Professional Edition | Timer | Stopwatch | Alarm | World Clock</p>
+    </div>
+
+    <!-- Theme Selector - Centered Perfectly -->
+    <div class="theme-selector">
+        <button class="theme-btn" onclick="changeTheme('midnight')">
+            <span class="theme-preview" style="background: linear-gradient(135deg, #00d4ff, #7c3aed);"></span>
+            Midnight
+        </button>
+        <button class="theme-btn" onclick="changeTheme('aurora')">
+            <span class="theme-preview" style="background: linear-gradient(135deg, #00ffcc, #00b894);"></span>
+            Aurora
+        </button>
+        <button class="theme-btn" onclick="changeTheme('sunset')">
+            <span class="theme-preview" style="background: linear-gradient(135deg, #ff6b9d, #c44569);"></span>
+            Sunset
+        </button>
+        <button class="theme-btn" onclick="changeTheme('emerald')">
+            <span class="theme-preview" style="background: linear-gradient(135deg, #00ff88, #00b894);"></span>
+            Emerald
+        </button>
+        <button class="theme-btn" onclick="changeTheme('ruby')">
+            <span class="theme-preview" style="background: linear-gradient(135deg, #ff4757, #ff6b81);"></span>
+            Ruby
+        </button>
+    </div>
+
+    <!-- Main Clock -->
+    <div class="clock-card">
+        <div class="time-main">
+            <span class="time-digit" id="hours">00</span>
+            <span>:</span>
+            <span class="time-digit" id="minutes">00</span>
+            <span>:</span>
+            <span class="time-digit" id="seconds">00</span>
+        </div>
+        <div class="date-section">
+            <div class="current-date" id="fullDate"></div>
+            <div class="day-info">
+                <span class="day-badge" id="session">AM</span>
+                <span class="day-badge" id="dayName"></span>
+                <span class="day-badge" id="weekInfo"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('clock')">🕐 Clock</button>
+        <button class="tab-btn" onclick="switchTab('timer')">⏱️ Timer</button>
+        <button class="tab-btn" onclick="switchTab('stopwatch')">⏲️ Stopwatch</button>
+        <button class="tab-btn" onclick="switchTab('alarm')">⏰ Alarm</button>
+        <button class="tab-btn" onclick="switchTab('worldclock')">🌍 World Clock</button>
+    </div>
+
+    <!-- Timer Tab -->
+    <div id="timerTab" class="tab-content">
+        <div class="clock-card">
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
+            <div class="control-group">
+                <input type="number" id="timerHours" class="time-input" placeholder="Hrs" min="0" max="23" value="0">
+                <input type="number" id="timerMinutes" class="time-input" placeholder="Min" min="0" max="59" value="0">
+                <input type="number" id="timerSeconds" class="time-input" placeholder="Sec" min="0" max="59" value="0">
+            </div>
+            <div class="control-group">
+                <button class="btn btn-success" id="startTimerBtn">▶ Start</button>
+                <button class="btn btn-warning" id="pauseTimerBtn">⏸ Pause</button>
+                <button class="btn btn-danger" id="resetTimerBtn">🔄 Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stopwatch Tab -->
+    <div id="stopwatchTab" class="tab-content">
+        <div class="clock-card">
+            <div class="stopwatch-display" id="stopwatchDisplay">00:00:00.00</div>
+            <div class="control-group">
+                <button class="btn btn-success" id="startStopwatchBtn">▶ Start</button>
+                <button class="btn btn-warning" id="pauseStopwatchBtn">⏸ Pause</button>
+                <button class="btn btn-danger" id="resetStopwatchBtn">🔄 Reset</button>
+                <button class="btn btn-info" id="lapBtn">📝 Lap</button>
+            </div>
+            <div class="lap-list" id="lapList"></div>
+        </div>
+    </div>
+
+    <!-- Alarm Tab -->
+    <div id="alarmTab" class="tab-content">
+        <div class="clock-card">
+            <div class="alarm-input-group">
+                <input type="time" id="alarmTime" class="alarm-time-input" step="1">
+                <button class="btn btn-primary" id="addAlarmBtn">➕ Add Alarm</button>
+            </div>
+            <div class="alarm-list" id="alarmList"></div>
+        </div>
+    </div>
+
+    <!-- World Clock Tab -->
+    <div id="worldclockTab" class="tab-content">
+        <div class="clock-card">
+            <div class="world-clock-grid" id="worldClockGrid"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>⭐ VIP Professional Digital Clock | Premium Themes | Fully Functional ⭐</p>
+    </div>
+</div>
+
+<script>
+    // ==================== PREMIUM THEMES ====================
+    const themes = {
+        midnight: {
+            bg: 'linear-gradient(135deg, #0a0a2a 0%, #1a1a4a 25%, #2a2a5a 50%, #1a1a4a 75%, #0a0a2a 100%)',
+            primary: '#00d4ff',
+            secondary: '#7c3aed'
+        },
+        aurora: {
+            bg: 'linear-gradient(135deg, #0a2a2a 0%, #1a4a3a 25%, #2a6a4a 50%, #1a4a3a 75%, #0a2a2a 100%)',
+            primary: '#00ffcc',
+            secondary: '#00b894'
+        },
+        sunset: {
+            bg: 'linear-gradient(135deg, #2a0a2a 0%, #5a1a3a 25%, #8a2a4a 50%, #5a1a3a 75%, #2a0a2a 100%)',
+            primary: '#ff6b9d',
+            secondary: '#c44569'
+        },
+        emerald: {
+            bg: 'linear-gradient(135deg, #0a2a1a 0%, #1a4a2a 25%, #2a6a3a 50%, #1a4a2a 75%, #0a2a1a 100%)',
+            primary: '#00ff88',
+            secondary: '#00b894'
+        },
+        ruby: {
+            bg: 'linear-gradient(135deg, #2a0a0a 0%, #5a1a1a 25%, #8a2a2a 50%, #5a1a1a 75%, #2a0a0a 100%)',
+            primary: '#ff4757',
+            secondary: '#ff6b81'
+        }
+    };
+
+    function changeTheme(themeName) {
+        const theme = themes[themeName];
+        if (!theme) return;
+        document.body.style.background = theme.bg;
+        document.documentElement.style.setProperty('--primary', theme.primary);
+        document.documentElement.style.setProperty('--secondary', theme.secondary);
+        showNotification(`${themeName.charAt(0).toUpperCase() + themeName.slice(1)} Theme Applied!`);
+    }
+
+    // Apply default theme on load
+    document.body.style.background = themes.midnight.bg;
+
+    // ==================== MAIN CLOCK with AUTO AM/PM ====================
+    function updateMainClock() {
+        const now = new Date();
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        let seconds = now.getSeconds();
+        
+        // Auto AM/PM detection
+        const session = hours >= 12 ? 'PM' : 'AM';
+        
+        // Convert to 12-hour format
+        let displayHours = hours % 12;
+        displayHours = displayHours ? displayHours : 12; // 12 for 0 hour
+        
+        document.getElementById('hours').textContent = String(displayHours).padStart(2, '0');
+        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        document.getElementById('session').textContent = session;
+        
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
+        document.getElementById('fullDate').innerHTML = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+        document.getElementById('dayName').textContent = days[now.getDay()];
+        
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        const weekNumber = Math.ceil((((now - startOfYear) / 86400000) + startOfYear.getDay() + 1) / 7);
+        document.getElementById('weekInfo').textContent = `Week ${weekNumber}`;
+    }
+    
+    setInterval(updateMainClock, 1000);
+    updateMainClock();
+
+    // ==================== TIMER ====================
+    let timerInterval = null;
+    let timerSeconds = 0;
+    let timerRunning = false;
+
+    function updateTimerDisplay() {
+        const hours = Math.floor(timerSeconds / 3600);
+        const minutes = Math.floor((timerSeconds % 3600) / 60);
+        const seconds = timerSeconds % 60;
+        document.getElementById('timerDisplay').textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        
+        if (timerSeconds <= 0 && timerRunning) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerInterval = null;
+            playAlarmSound();
+            showNotification("⏰ Timer Finished! Time's up!");
+        }
+    }
+
+    function startTimer() {
+        if (timerRunning) return;
+        
+        const hours = parseInt(document.getElementById('timerHours').value) || 0;
+        const minutes = parseInt(document.getElementById('timerMinutes').value) || 0;
+        const seconds = parseInt(document.getElementById('timerSeconds').value) || 0;
+        
+        if (timerSeconds === 0 && !timerRunning) {
+            timerSeconds = hours * 3600 + minutes * 60 + seconds;
+            updateTimerDisplay();
+        }
+        
+        if (timerSeconds > 0) {
+            timerRunning = true;
+            timerInterval = setInterval(() => {
+                if (timerSeconds > 0) {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                }
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    timerInterval = null;
+                }
+            }, 1000);
+        } else {
+            showNotification("Please set a time first!");
+        }
+    }
+
+    function pauseTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerRunning = false;
+        }
+    }
+
+    function resetTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        timerRunning = false;
+        timerSeconds = 0;
+        updateTimerDisplay();
+        document.getElementById('timerHours').value = 0;
+        document.getElementById('timerMinutes').value = 0;
+        document.getElementById('timerSeconds').value = 0;
+    }
+
+    document.getElementById('startTimerBtn').onclick = startTimer;
+    document.getElementById('pauseTimerBtn').onclick = pauseTimer;
+    document.getElementById('resetTimerBtn').onclick = resetTimer;
+
+    // ==================== STOPWATCH ====================
+    let stopwatchInterval = null;
+    let stopwatchTime = 0;
+    let stopwatchRunning = false;
+    let lapCount = 0;
+
+    function updateStopwatchDisplay() {
+        const hours = Math.floor(stopwatchTime / 3600000);
+        const minutes = Math.floor((stopwatchTime % 3600000) / 60000);
+        const seconds = Math.floor((stopwatchTime % 60000) / 1000);
+        const milliseconds = Math.floor((stopwatchTime % 1000) / 10);
+        document.getElementById('stopwatchDisplay').textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(milliseconds).padStart(2, '0')}`;
+    }
+
+    function startStopwatch() {
+        if (stopwatchRunning) return;
+        stopwatchRunning = true;
+        const startTime = Date.now() - stopwatchTime;
+        stopwatchInterval = setInterval(() => {
+            stopwatchTime = Date.now() - startTime;
+            updateStopwatchDisplay();
+        }, 10);
+    }
+
+    function pauseStopwatch() {
+        if (stopwatchInterval) {
+            clearInterval(stopwatchInterval);
+            stopwatchInterval = null;
+            stopwatchRunning = false;
+        }
+    }
+
+    function resetStopwatch() {
+        if (stopwatchInterval) {
+            clearInterval(stopwatchInterval);
+            stopwatchInterval = null;
+        }
+        stopwatchRunning = false;
+        stopwatchTime = 0;
+        lapCount = 0;
+        updateStopwatchDisplay();
+        document.getElementById('lapList').innerHTML = '';
+    }
+
+    function recordLap() {
+        if (!stopwatchRunning && stopwatchTime === 0) {
+            showNotification("Start stopwatch first!");
+            return;
+        }
+        lapCount++;
+        const currentTime = document.getElementById('stopwatchDisplay').textContent;
+        const lapDiv = document.createElement('div');
+        lapDiv.className = 'lap-item';
+        lapDiv.innerHTML = `<span>Lap ${lapCount}</span><span>${currentTime}</span>`;
+        const lapList = document.getElementById('lapList');
+        lapList.insertBefore(lapDiv, lapList.firstChild);
+    }
+
+    document.getElementById('startStopwatchBtn').onclick = startStopwatch;
+    document.getElementById('pauseStopwatchBtn').onclick = pauseStopwatch;
+    document.getElementById('resetStopwatchBtn').onclick = resetStopwatch;
+    document.getElementById('lapBtn').onclick = recordLap;
+
+    // ==================== ALARM ====================
+    let alarms = JSON.parse(localStorage.getItem('alarms')) || [];
+
+    function playAlarmSound() {
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = 880;
+            gainNode.gain.value = 0.3;
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 2);
+            oscillator.stop(audioContext.currentTime + 2);
+        } catch(e) {
+            console.log("Audio not supported");
+        }
+    }
+
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = message;
+        document.body.appendChild(notification);
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+
+    function addAlarm() {
+        const alarmTime = document.getElementById('alarmTime').value;
+        if (!alarmTime) {
+            showNotification("Please select a time!");
+            return;
+        }
+        const newAlarm = {
+            id: Date.now(),
+            time: alarmTime,
+            enabled: true
+        };
+        alarms.push(newAlarm);
+        localStorage.setItem('alarms', JSON.stringify(alarms));
+        renderAlarms();
+        showNotification(`Alarm set for ${alarmTime}`);
+        document.getElementById('alarmTime').value = '';
+    }
+
+    function deleteAlarm(id) {
+        alarms = alarms.filter(alarm => alarm.id !== id);
+        localStorage.setItem('alarms', JSON.stringify(alarms));
+        renderAlarms();
+        showNotification("Alarm deleted!");
+    }
+
+    function renderAlarms() {
+        const alarmList = document.getElementById('alarmList');
+        if (!alarmList) return;
+        alarmList.innerHTML = '';
+        if (alarms.length === 0) {
+            alarmList.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.5); padding: 20px;">No alarms set. Add one above!</div>';
+            return;
+        }
+        alarms.forEach(alarm => {
+            const alarmDiv = document.createElement('div');
+            alarmDiv.className = 'alarm-item';
+            alarmDiv.innerHTML = `
+                <span style="color: white; font-size: 16px;">⏰ ${alarm.time}</span>
+                <button class="btn btn-danger" style="padding: 8px 20px;" onclick="deleteAlarm(${alarm.id})">Delete</button>
+            `;
+            alarmList.appendChild(alarmDiv);
+        });
+    }
+
+    function checkAlarms() {
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        
+        alarms.forEach(alarm => {
+            if (alarm.enabled && currentTime === `${alarm.time}:00`) {
+                playAlarmSound();
+                showNotification(`⏰ ALARM! Time is ${alarm.time}`);
+                alarm.enabled = false;
+                localStorage.setItem('alarms', JSON.stringify(alarms));
+                renderAlarms();
+            }
+        });
+    }
+
+    document.getElementById('addAlarmBtn').onclick = addAlarm;
+    setInterval(checkAlarms, 1000);
+    renderAlarms();
+
+    // ==================== WORLD CLOCK ====================
+    const cities = [
+        { name: "🇵🇰 Karachi, Pakistan", offset: 5 },
+        { name: "🇦🇪 Dubai, UAE", offset: 4 },
+        { name: "🇬🇧 London, UK", offset: 1 },
+        { name: "🇺🇸 New York, USA", offset: -4 },
+        { name: "🇯🇵 Tokyo, Japan", offset: 9 },
+        { name: "🇦🇺 Sydney, Australia", offset: 11 },
+        { name: "🇩🇪 Berlin, Germany", offset: 2 },
+        { name: "🇨🇦 Toronto, Canada", offset: -4 },
+        { name: "🇸🇬 Singapore", offset: 8 },
+        { name: "🇮🇳 Mumbai, India", offset: 5.5 },
+        { name: "🇫🇷 Paris, France", offset: 2 },
+        { name: "🇧🇷 Sao Paulo, Brazil", offset: -3 }
+    ];
+
+    function updateWorldClock() {
+        const now = new Date();
+        const grid = document.getElementById('worldClockGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        
+        cities.forEach(city => {
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const cityTime = new Date(utc + (3600000 * city.offset));
+            
+            const card = document.createElement('div');
+            card.className = 'city-card';
+            card.innerHTML = `
+                <div class="city-name">${city.name}</div>
+                <div class="city-time">${String(cityTime.getHours()).padStart(2, '0')}:${String(cityTime.getMinutes()).padStart(2, '0')}:${String(cityTime.getSeconds()).padStart(2, '0')}</div>
+                <div class="city-date">${cityTime.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+    
+    setInterval(updateWorldClock, 1000);
+    updateWorldClock();
+
+    // ==================== TAB SWITCHING ====================
+    function switchTab(tabName) {
+        const tabs = ['clock', 'timer', 'stopwatch', 'alarm', 'worldclock'];
+        tabs.forEach(tab => {
+            const content = document.getElementById(`${tab}Tab`);
+            if (content) content.classList.remove('active');
+        });
+        
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        const activeTab = document.getElementById(`${tabName}Tab`);
+        if (activeTab) activeTab.classList.add('active');
+        
+        const buttons = document.querySelectorAll('.tab-btn');
+        for (let btn of buttons) {
+            if (btn.textContent.includes(tabName === 'worldclock' ? 'World' : 
+                tabName === 'stopwatch' ? 'Stop' :
+                tabName.charAt(0).toUpperCase() + tabName.slice(1))) {
+                btn.classList.add('active');
+                break;
+            }
+        }
+    }
+
+    // Make functions global
+    window.switchTab = switchTab;
+    window.changeTheme = changeTheme;
+    window.deleteAlarm = deleteAlarm;
+</script>
+</body>
+</html>
