@@ -131,7 +131,7 @@
             }
         }
 
-        /* Theme Selector - Fixed at Top */
+        /* Theme Selector */
         .theme-selector {
             display: flex;
             justify-content: center;
@@ -170,7 +170,6 @@
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Theme Preview Color Dot */
         .theme-preview {
             width: 20px;
             height: 20px;
@@ -474,6 +473,16 @@
             }
         }
 
+        /* Alarm Ringing Animation */
+        @keyframes ringAnimation {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); background: #ff4757; }
+        }
+
+        .alarm-ringing {
+            animation: ringAnimation 0.5s ease-in-out infinite !important;
+        }
+
         /* Lap List */
         .lap-list {
             margin-top: 20px;
@@ -553,7 +562,7 @@
         <p>Professional Edition | Timer | Stopwatch | Alarm | World Clock</p>
     </div>
 
-    <!-- Theme Selector - Centered Perfectly -->
+    <!-- Theme Selector -->
     <div class="theme-selector">
         <button class="theme-btn" onclick="changeTheme('midnight')">
             <span class="theme-preview" style="background: linear-gradient(135deg, #00d4ff, #7c3aed);"></span>
@@ -660,6 +669,89 @@
 </div>
 
 <script>
+    // ==================== ALARM SOUND ====================
+    let alarmAudioContext = null;
+    let alarmInterval = null;
+    let currentRingingAlarm = null;
+
+    function playAlarmSound() {
+        // Stop any currently playing alarm
+        stopAlarmSound();
+        
+        try {
+            // Create Audio Context
+            alarmAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            let startTime = alarmAudioContext.currentTime;
+            
+            function playBeep() {
+                if (!alarmAudioContext) return;
+                
+                const oscillator = alarmAudioContext.createOscillator();
+                const gainNode = alarmAudioContext.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(alarmAudioContext.destination);
+                
+                // Alternating frequencies for more noticeable alarm
+                const frequency = Math.random() > 0.5 ? 880 : 440;
+                oscillator.frequency.value = frequency;
+                gainNode.gain.value = 0.3;
+                
+                oscillator.start();
+                gainNode.gain.exponentialRampToValueAtTime(0.00001, alarmAudioContext.currentTime + 0.5);
+                oscillator.stop(alarmAudioContext.currentTime + 0.5);
+            }
+            
+            // Play beeps repeatedly
+            playBeep();
+            alarmInterval = setInterval(() => {
+                if (alarmAudioContext) {
+                    playBeep();
+                }
+            }, 800);
+            
+            // Add visual ringing effect to alarm tab button
+            const alarmTabBtn = document.querySelector('.tab-btn:nth-child(4)');
+            if (alarmTabBtn) {
+                alarmTabBtn.classList.add('alarm-ringing');
+            }
+            
+        } catch(e) {
+            console.log("Audio not supported, using fallback");
+            // Fallback: Use simple beep with console
+            fallbackBeep();
+        }
+    }
+    
+    function fallbackBeep() {
+        // Simple beep using console (for browsers that don't support Web Audio)
+        for(let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                try {
+                    const audio = new Audio('data:audio/wav;base64,U3RlYWx0aCBzb3VuZA==');
+                    audio.play().catch(e => console.log('Audio fallback'));
+                } catch(e) {}
+            }, i * 500);
+        }
+    }
+    
+    function stopAlarmSound() {
+        if (alarmInterval) {
+            clearInterval(alarmInterval);
+            alarmInterval = null;
+        }
+        if (alarmAudioContext) {
+            alarmAudioContext.close();
+            alarmAudioContext = null;
+        }
+        
+        // Remove visual ringing effect
+        const alarmTabBtn = document.querySelector('.tab-btn:nth-child(4)');
+        if (alarmTabBtn) {
+            alarmTabBtn.classList.remove('alarm-ringing');
+        }
+    }
+
     // ==================== PREMIUM THEMES ====================
     const themes = {
         midnight: {
@@ -701,19 +793,16 @@
     // Apply default theme on load
     document.body.style.background = themes.midnight.bg;
 
-    // ==================== MAIN CLOCK with AUTO AM/PM ====================
+    // ==================== MAIN CLOCK ====================
     function updateMainClock() {
         const now = new Date();
         let hours = now.getHours();
         let minutes = now.getMinutes();
         let seconds = now.getSeconds();
         
-        // Auto AM/PM detection
         const session = hours >= 12 ? 'PM' : 'AM';
-        
-        // Convert to 12-hour format
         let displayHours = hours % 12;
-        displayHours = displayHours ? displayHours : 12; // 12 for 0 hour
+        displayHours = displayHours ? displayHours : 12;
         
         document.getElementById('hours').textContent = String(displayHours).padStart(2, '0');
         document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
@@ -751,6 +840,7 @@
             timerInterval = null;
             playAlarmSound();
             showNotification("⏰ Timer Finished! Time's up!");
+            setTimeout(() => stopAlarmSound(), 5000);
         }
     }
 
@@ -875,23 +965,6 @@
     // ==================== ALARM ====================
     let alarms = JSON.parse(localStorage.getItem('alarms')) || [];
 
-    function playAlarmSound() {
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            oscillator.frequency.value = 880;
-            gainNode.gain.value = 0.3;
-            oscillator.start();
-            gainNode.gain.exponentialRampToValueAtTime(0.00001, audioContext.currentTime + 2);
-            oscillator.stop(audioContext.currentTime + 2);
-        } catch(e) {
-            console.log("Audio not supported");
-        }
-    }
-
     function showNotification(message) {
         const notification = document.createElement('div');
         notification.className = 'notification';
@@ -957,6 +1030,11 @@
                 alarm.enabled = false;
                 localStorage.setItem('alarms', JSON.stringify(alarms));
                 renderAlarms();
+                
+                // Auto stop alarm after 30 seconds
+                setTimeout(() => {
+                    stopAlarmSound();
+                }, 30000);
             }
         });
     }
